@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Gift Configurator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                overflow: hidden;
+                font-family: Arial, sans-serif;
+                background: #f3f3f3;
+            }
+
+            /* =========================
+            TOP BAR
+            ========================= */
+
+            #topbar {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 20px;
+                background: white;
+                border-bottom: 1px solid #ddd;
+                z-index: 10;
+            }
+
+            .top-btn {
+                font-size: 14px;
+                cursor: pointer;
+                color: #222;
+            }
+
+            #contacts {
+                font-size: 13px;
+                color: #666;
+            }
+
+            /* =========================
+            MAIN
+            ========================= */
+
+            #app {
+                display: flex;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            /* =========================
+            LEFT UI
+            ========================= */
+
+            #sidebar {
+                width: 320px;
+                background: white;
+                border-right: 1px solid #ddd;
+                padding-top: 70px;
+                padding-left: 16px;
+                padding-right: 16px;
+                display: flex;
+                flex-direction: column;
+                gap: 24px;
+            }
+
+            /* =========================
+            PATTERNS
+            ========================= */
+
+            .section-title {
+                font-size: 13px;
+                font-weight: bold;
+                color: #666;
+                margin-bottom: 10px;
+            }
+
+            #patterns-row {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .pattern {
+                width: 60px;
+                height: 60px;
+                border: 2px solid #ddd;
+                border-radius: 12px;
+                overflow: hidden;
+                cursor: pointer;
+                transition: 0.2s;
+            }
+
+                .pattern img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .pattern:hover {
+                    transform: scale(1.05);
+                }
+
+                .pattern.active {
+                    border: 3px solid #ffd000;
+                    transform: scale(1.08);
+                }
+
+            /* =========================
+            RIBBON COLORS
+            ========================= */
+
+            #colors-row {
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .color-btn {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: 0.18s;
+                position: relative;
+                border: none;
+            }
+
+                .color-btn:hover {
+                    transform: scale(1.12);
+                }
+
+                .color-btn.active {
+                    transform: scale(1.35);
+                    box-shadow: 0 0 0 3px rgba(255,208,0,0.9), 0 0 12px rgba(255,208,0,0.7);
+                }
+            /* =========================
+            EMPTY SPACE
+            ========================= */
+
+            #future-ui {
+                flex: 1;
+                border: 1px dashed #ddd;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #bbb;
+                font-size: 13px;
+            }
+
+            /* =========================
+            VIEWER
+            ========================= */
+
+            #viewer {
+                flex: 1;
+                width: 100vw !important;
+            }
+
+            canvas {
+                display: block;
+            }
+
+
+        @media screen and (max-width: 768px) {
+
+            /* =========================
+    GLOBAL
+    ========================= */
+
+            body {
+                overflow: hidden;
+            }
+
+            /* =========================
+    TOPBAR
+    ========================= */
+
+            #topbar {
+                height: 44px;
+                padding: 0 10px;
+                z-index: 100;
+            }
+
+            .top-btn {
+                font-size: 12px;
+            }
+
+            #contacts {
+                font-size: 10px;
+            }
+
+            /* =========================
+    APP LAYOUT
+    ========================= */
+
+            #app {
+                flex-direction: column;
+                width: 100vw;
+                height: 100vh;
+            }
+
+            /* =========================
+    VIEWER
+    ========================= */
+
+            #viewer {
+                width: 100vw;
+                height: 58vh;
+                flex: none;
+            }
+
+            /* =========================
+    SIDEBAR
+    ========================= */
+
+            #sidebar {
+                width: 100vw;
+                height: 42vh;
+                flex: none;
+                border-right: none;
+                border-top: 1px solid #ddd;
+                padding-top: 12px;
+                padding-left: 12px;
+                padding-right: 12px;
+                gap: 14px;
+                overflow-y: auto;
+            }
+
+            /* =========================
+    PATTERNS
+    ========================= */
+
+            #patterns-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .pattern {
+                width: 56px;
+                height: 56px;
+                min-width: 56px;
+                min-height: 56px;
+                border-radius: 10px;
+            }
+
+            /* =========================
+    COLORS
+    ========================= */
+
+            #colors-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .color-btn {
+                width: 22px;
+                height: 22px;
+            }
+
+            /* =========================
+    FUTURE PANEL
+    ========================= */
+
+            #future-ui {
+                min-height: 90px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+    TOP BAR
+    ========================= -->
+
+    <div id="topbar">
+
+        <div class="top-btn">
+            Аккаунт
+        </div>
+
+        <div id="contacts">
+            support@giftbox.com
+        </div>
+
+        <div class="top-btn">
+            Заказы
+        </div>
+
+    </div>
+
+    <!-- =========================
+    APP
+    ========================= -->
+
+    <div id="app">
+
+        <!-- LEFT -->
+        <div id="sidebar">
+
+            <!-- PATTERNS -->
+            <div>
+
+                <div class="section-title">
+                    ОБЁРТКА
+                </div>
+
+                <div id="patterns-row">
+
+                    <div class="pattern active" data-gift="gift1.glb">
+                        <img src="./images/p1.jpg">
+                    </div>
+
+                    <div class="pattern" data-gift="gift2.glb">
+                        <img src="./images/p2.jpg">
+                    </div>
+
+                    <div class="pattern" data-gift="gift1.glb">
+                        <img src="./images/p1.jpg">
+                    </div>
+
+                    <div class="pattern" data-gift="gift2.glb">
+                        <img src="./images/p2.jpg">
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- COLORS -->
+            <div>
+
+                <div class="section-title">
+                   ЦВЕТ БАНТА
+                </div>
+
+                <div id="colors-row">
+
+                    <div class="color-btn active" style="background:#111;"></div>
+
+                    <div class="color-btn" style="background:#e63946;"></div>
+
+                    <div class="color-btn" style="background:#457b9d;"></div>
+
+                    <div class="color-btn" style="background:#2a9d8f;"></div>
+
+                    <div class="color-btn" style="background:#ffb703;"></div>
+
+                    <div class="color-btn" style="background:#8338ec;"></div>
+
+                </div>
+
+            </div>
+
+            <!-- FUTURE UI -->
+            <div id="future-ui">
+
+                Контактные данные и пр.
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div id="viewer"></div>
+
+    </div>
+
+    <script type="module" src="A4.js"></script>
+
+</body>
+</html>
